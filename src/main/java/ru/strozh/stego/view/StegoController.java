@@ -142,10 +142,15 @@ public class StegoController implements Serializable {
         fileStego = new DefaultStreamedContent(stream, "image/jpg", imgName);
         return fileStego;
     }
-    
+
     public StreamedContent getFileUnStego() {
-        InputStream stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/input/" + imgName + ".txt");
-        fileStego = new DefaultStreamedContent(stream, "application/txt", imgName + ".txt");
+        if (redirectController.getResultType().compareTo("text") == 0) {
+            InputStream stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/input/" + imgName + ".txt");
+            fileStego = new DefaultStreamedContent(stream, "application/txt", imgName + ".txt");
+        } else {            
+            InputStream stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/input/" + redirectController.getResultName());
+            fileStego = new DefaultStreamedContent(stream, "application/jpg", redirectController.getResultName());
+        }
         return fileStego;
     }
 }

@@ -2,6 +2,7 @@ package ru.strozh.stego.view;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
@@ -22,11 +23,21 @@ public class RedirectController implements Serializable {
 
     private BufferedImage img;
     private String unstegoText;
+    private String resultType;
+    private String resultName;
 
     public String getUnstegoText() {
         return unstegoText;
     }
 
+    public String getResultType() {
+        return resultType;
+    }
+
+    public String getResultName() {
+        return resultName;
+    }
+    
     public String redirectToStegoWithText(String imgName, String text) throws IOException, GeneralSecurityException {
         System.out.println("imgName=" + imgName);
         String path = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
@@ -52,30 +63,6 @@ public class RedirectController implements Serializable {
 
         System.out.println("Записали в файл");
 
-
-//        // Считываем картинку
-//        img = ImageIO.read(f);
-//
-//        Signal signal = ImageProcessor.getSignal(img, 0);
-//
-//        // Создаём стего
-//        Stego stego = StegoTools.createStego(signal);
-//
-//        /**
-//         * * Пишем в стего **
-//         */
-//        StegoWriter sw = new StegoWriter(stego);
-//        sw.write(new Secret(Secret.Type.TEXT, text.getBytes()));
-//
-//        BufferedImage img_1 = img;
-//        ImageProcessor.setBand(img_1, signal, 0);
-//
-//        imgName = Long.toString(new Date().getTime());
-//        imgName = imgName.concat(".bmp");
-//        String to = path + "/input/" + imgName; //?добавить расширение
-//        ImageIO.write(img_1, "bmp", new File(to));
-//        FacesContext.getCurrentInstance().getExternalContext().redirect("/stego/stego.xhtml");
-
         imgName = Long.toString(new Date().getTime());
         imgName = imgName.concat(f.getName());
         String to = path + "/input/" + imgName; //?добавить расширение        
@@ -95,17 +82,21 @@ public class RedirectController implements Serializable {
         String path = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
         File f = new File(path + "/input/" + imgName);
         File stegoFile = new File(path + "/input/" + fileName);
-         byte[] bFile = new byte[(int) stegoFile.length()];
+        byte[] bFile = new byte[(int) stegoFile.length()];
+
+        FileInputStream fileInputStream = new FileInputStream(stegoFile);
+        fileInputStream.read(bFile);
+        fileInputStream.close();
 
         f = ImageToBmp.saveImageToBmp(f, path);
 
         FileStegoCover fileStegoCover = new FileStegoCover(f);
         Writeble wr = new CryptoStegoWriter(new StegoWriter(fileStegoCover));
         wr.write(new Secret(Secret.Type.FILE, fileName.getBytes(), bFile));
-        
+
         imgName = Long.toString(new Date().getTime());
         imgName = imgName.concat(f.getName());
-        String to = path + "/input/" + imgName; 
+        String to = path + "/input/" + imgName;
 
         File outputFile = new File(to);
         byte[] bytes = Files.readAllBytes(f.toPath());
@@ -128,22 +119,44 @@ public class RedirectController implements Serializable {
 
         Secret secret = readeble.read();
 
-        unstegoText = new String(secret.getData());
 
-        System.out.println("Начинаем запись пдф");
+        // getAttachment возавращает имя файла (в случае передачи текстового сообщения поле ничего не содержит)
+        String fName = path + "/input/" + new String(secret.getAttachment());
 
-        File outText = new File(path + "/input/" + imgName + ".txt");
-        outText.createNewFile();
+        if (fName.compareTo("") != 0) {
 
-        System.out.println("Продолжаем запись пдф");
+            // Создаём новый файл
+            File res = new File(fName);
+            res.createNewFile();
 
-        FileOutputStream outputStream = new FileOutputStream(outText);
+            // Поток для записи в файл
+            FileOutputStream fos = new FileOutputStream(res);
 
-        outputStream.write(secret.getData());
-        outputStream.flush();
-        outputStream.close();
+            // Получаем данные (getData()) и пишем их в поток
+            fos.write(secret.getData());
+            fos.flush();
+            fos.close();
 
-        System.out.println("Конец запись пдф");
+            unstegoText = new String(secret.getAttachment());
+            resultName = new String(secret.getAttachment());
+            resultType = "file";
+
+        } else {
+
+            unstegoText = new String(secret.getData());
+
+            File outText = new File(path + "/input/" + imgName + ".txt");
+            outText.createNewFile();
+
+            FileOutputStream outputStream = new FileOutputStream(outText);
+
+            outputStream.write(secret.getData());
+            outputStream.flush();
+            outputStream.close();
+
+            resultType = "text";
+
+        }
 
         FacesContext.getCurrentInstance().getExternalContext().redirect("/stego/unstego.xhtml");
 
