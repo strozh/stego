@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:body>
+        <ui:composition template="/template.xhtml">
+            <ui:param name="titlePage" value="Главная"/>
+            <ui:define name="content">
+                <div class="hero-unit" style="text-align: center; background-color: white; background-image: url(img/bgh.png);">
+                    <h:form>
+                        <p:commandLink styleClass="head" value="SteGO!" style="font-size: 64px; font-weight: bolder;"/>
+                    </h:form>
+                </div>
+                <div class="container" style="text-align: center;">
+                    <h:panelGrid columns="3" style="margin-bottom: 0px; width: 100%; text-align: center!important;">
+                        <h:form>
+                            <p:commandButton value="Назад" 
+                                             actionListener="#{stego.redirectToIndex}"
+                                             styleClass="btn-small"
+                                             style="margin-right: 10px;"
+                                             icon="ui-icon-arrowreturnthick-1-w"/>
+                            <p:commandButton value="Сохранить"
+                                             styleClass="btn-success btn-small" 
+                                             ajax="false"
+                                             icon="ui-icon-arrowthickstop-1-s">
+                                <p:fileDownload value="#{stego.fileUnStego}"/>
+                            </p:commandButton>
+                        </h:form>
+                    </h:panelGrid>
+                    <div class="well">
+                        <h:outputText value="#{stego.unstegoText}"/>
+                    </div>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

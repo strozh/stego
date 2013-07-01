@@ -1,0 +1,22 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>        
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <f:facet name="last">
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/bootstrap.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/custom.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/bootstrap-responsive.css" />
+        </f:facet>
+
+        <title>
+            test!
+            <ui:insert name="title"/>
+        </title>
+    </h:head>
+    <h:body style="background-color: #cbEBF7;background-image: url(img/bg.jpg)">
+        <ui:insert name="content"/>
+    </h:body>
+</html>

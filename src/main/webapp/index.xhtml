@@ -1,0 +1,121 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:body>
+        <ui:composition template="/template.xhtml">
+            <ui:param name="titlePage" value="Главная"/>
+            <ui:define name="content">
+                #{pathController.start()}
+                #{stego.defaultImage()}
+                <div class="hero-unit" style="text-align: center; background-color: white; background-image: url(img/bgh.png);">
+                    <h:form>
+                        <p:commandLink styleClass="head" value="SteGO!" style="font-size: 64px; font-weight: bolder;"/>
+                    </h:form>
+                </div>
+                <script type="text/javascript">
+                    $('.tt').hover(function() {
+                        alert("DDD");
+                    });
+                    
+                    function abc() {
+                        alert("DDD");
+                    }
+                    
+                </script>
+                <div class="container" style="text-align: center;">
+                    <h:form enctype="multipart/form-data" styleClass="panelCentre">
+                        <h:panelGrid styleClass="panelCentre" columns="2" cellpadding="0">
+                            <h:panelGrid style="margin-left: 0px; margin-right: 10px;">
+                                <h:outputText value="Своё изображение" style="font-size: 16px;" styleClass="label label-important myPic"/>
+                                <p:fileUpload fileUploadListener="#{stego.handleFileUpload}" 
+                                              mode="advanced"
+                                              update=":p"
+                                              styleClass="fileUpload"
+                                              auto="true"                                              
+                                              allowTypes="/(\.|\/)(bmp|gif|jpe?g|png)$/"
+                                              onstart="$('.preloader').show();"
+                                              />
+                            </h:panelGrid>
+                            <h:panelGrid columns="3" styleClass="panelCentre" style="margin-top: -2px;">
+                                <h:outputText value="URL" styleClass="label label-important tt" style="font-size: 16px;"/>
+                                <p:inputText id="urlStr" value="#{stego.urlStr}" 
+                                             style="font-size: 12px; width: 160px; margin: 0px; margin-right: 5px; height: 22px; text-align: center;">
+                                    <p:watermark value="ссылка на изображение" for="urlStr"/>
+                                </p:inputText>
+                                <p:commandButton icon="ui-icon-circle-arrow-e" 
+                                                 styleClass="btn-warning btn"
+                                                 actionListener="#{stego.dwnldImg()}"
+                                                 update=":p"
+                                                 title="Загрузить"
+                                                 onclick="$('.preloader').show();"
+                                                 style="height: 22px; padding: 0px;"
+                                                 />
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </h:form>
+                    <h:panelGrid styleClass="panelCentre" id="p">
+
+                        <p:graphicImage value="/img/preloader.gif" styleClass="preloader"/>
+                        <p:graphicImage alt="Выберите изображение" cache="false"
+                                        value="/input/#{stego.imgName}"
+                                        id="imageInput"
+                                        style=" margin-top: 10px;"
+                                        library="images" styleClass="img-polaroid imageInput"/>
+                    </h:panelGrid>
+
+
+                    <h:form id="form" enctype="multipart/form-data">
+                        <script type="text/javascript">
+                    function txtActive() {
+                        $('.txtPanel').css('display', 'table');
+                        $('.filePanel').css('display', 'none');
+                        $('.textBtn').addClass('btn-info');
+                        $('.fileBtn').removeClass('btn-info');
+                        
+                    }
+                    
+                    function fileActive() {
+                        $('.txtPanel').css('display', 'none');
+                        $('.filePanel').css('display', 'table');
+                        $('.fileBtn').addClass('btn-info');
+                        $('.textBtn').removeClass('btn-info');
+                    }
+                    
+                        </script>
+
+                        <h:panelGrid columns="2" styleClass="panelCentre" style="margin-top: 30px;">
+                            <p:commandButton actionListener="#{stego.setTypeText()}"
+                                             styleClass="textBtn btn-info" value="Текст" onclick="txtActive();"/>
+                            <p:commandButton actionListener="#{stego.setTypeFile()}"
+                                             styleClass="fileBtn" value="Файл" onclick="fileActive();"/>
+                        </h:panelGrid>
+                        <h:panelGrid styleClass="panelCentre" style="height: 150px; vertical-align: middle;">
+                            <h:panelGrid id="txtPanel" styleClass="txtPanel" style="width: 100%; height: 100px; text-align: center;">
+                                <p:inputTextarea id="inptTxtarea"
+                                                 style="width: 500px; height: 100px; margin-top: 30px; font-size: 14px;" 
+                                                 autoResize="false" value="#{stego.text}"/>
+                                <p:watermark value="Текстовое сообщение" for="form:inptTxtarea"/>
+                            </h:panelGrid>
+                            <h:panelGrid styleClass="filePanel" style="display: none; width: 100%; margin-top: 30px; text-align: center; height: 100px;">
+                                <p:fileUpload value="#{stego.file}" mode="simple"/>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <p:commandButton value="stego" ajax="false" 
+                                         style="margin-top: 15px; font-size: 16px;" 
+                                         styleClass="btn-success btn"
+                                         actionListener="#{stego.redirectToStego()}"
+                                         />
+                        <p:commandButton value="unstego" ajax="false" 
+                                         style="margin-top: 15px; font-size: 16px;" 
+                                         styleClass="btn-inverse btn"
+                                         actionListener="#{stego.redirectToUnStego()}"
+                                         />
+                    </h:form>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
