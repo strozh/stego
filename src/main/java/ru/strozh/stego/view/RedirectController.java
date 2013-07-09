@@ -37,8 +37,8 @@ public class RedirectController implements Serializable {
     public String getResultName() {
         return resultName;
     }
-    
-    public String redirectToStegoWithText(String imgName, String text) throws IOException, GeneralSecurityException {
+
+    public String redirectToStegoWithText(String imgName, String text, String password) throws IOException, GeneralSecurityException {
         System.out.println("imgName=" + imgName);
         String path = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
         File f = new File(path + "/input/" + imgName);
@@ -51,7 +51,14 @@ public class RedirectController implements Serializable {
 
         System.out.println("Получили stegoCover");
 
-        Writeble wr = new CryptoStegoWriter(new StegoWriter(fileStegoCover));
+        Writeble wr;
+        if (password != null) {
+            CryptoStegoWriter cryptoStegoWriter = new CryptoStegoWriter(new StegoWriter(fileStegoCover));
+            cryptoStegoWriter.setPassword(password);
+            wr = new CryptoStegoWriter(cryptoStegoWriter);
+        } else {
+            wr = new CryptoStegoWriter(new StegoWriter(fileStegoCover));
+        }
 
         System.out.println("Получили cryptoStegoWriter");
 
@@ -78,7 +85,7 @@ public class RedirectController implements Serializable {
         return imgName;
     }
 
-    public String redirectToStegoWithFile(String imgName, String fileName) throws IOException, GeneralSecurityException {
+    public String redirectToStegoWithFile(String imgName, String fileName, String password) throws IOException, GeneralSecurityException {
         String path = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
         File f = new File(path + "/input/" + imgName);
         File stegoFile = new File(path + "/input/" + fileName);
@@ -91,7 +98,14 @@ public class RedirectController implements Serializable {
         f = ImageToBmp.saveImageToBmp(f, path);
 
         FileStegoCover fileStegoCover = new FileStegoCover(f);
-        Writeble wr = new CryptoStegoWriter(new StegoWriter(fileStegoCover));
+        Writeble wr;
+        if (password != null) {
+            CryptoStegoWriter cryptoStegoWriter = new CryptoStegoWriter(new StegoWriter(fileStegoCover));
+            cryptoStegoWriter.setPassword(password);
+            wr = new CryptoStegoWriter(cryptoStegoWriter);
+        } else {
+            wr = new CryptoStegoWriter(new StegoWriter(fileStegoCover));
+        }
         wr.write(new Secret(Secret.Type.FILE, fileName.getBytes(), bFile));
 
         imgName = Long.toString(new Date().getTime());
@@ -109,13 +123,19 @@ public class RedirectController implements Serializable {
         return imgName;
     }
 
-    public void redirectToUnStego(String imgName) throws IOException, GeneralSecurityException {
+    public void redirectToUnStego(String imgName, String password) throws IOException, GeneralSecurityException {
 
         String path = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
         File f = new File(path + "/input/" + imgName);
 
         FileStegoCover fileStegoCover = new FileStegoCover(f);
+
+        CryptoStegoReader cryptoStegoReader = new CryptoStegoReader(new StegoReader(fileStegoCover));
         Readeble readeble = new CryptoStegoReader(new StegoReader(fileStegoCover));
+        if (password != null) {
+            cryptoStegoReader.setPassword(password);
+            readeble = new CryptoStegoReader(cryptoStegoReader);
+        }
 
         Secret secret = readeble.read();
 

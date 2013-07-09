@@ -96,3 +96,67 @@ input.fileUpload  {
     margin: -20px auto; 
     text-align: center;
 }
+
+.lang {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.rusFlag {
+    background-image: url(../img/russia.png);
+    background-size: contain;
+    background-position: top;
+    height: 30px;
+    font-size: 20px;
+}
+.rusFlag:hover {
+    background-image: url(../img/russia.png);
+    background-size: contain;
+    background-position: top;
+    height: 30px;
+    font-size: 20px;
+}
+
+.engFlag {
+    background-image: url(../img/great_britain.png);
+    background-size: contain;
+    background-position: top;
+    height: 30px;
+    font-size: 20px;
+}
+
+.engFlag:hover {
+    background-image: url(../img/great_britain.png);
+    background-size: contain;
+    background-position: top;
+    height: 30px;
+    font-size: 20px;
+}
+
+.share {
+    background-color: transparent ;   
+    display: inline-block;
+    vertical-align: middle;
+    width: 32px;
+    height: 32px;
+    line-height: 20px;
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    background-image: url("../img/sharebox.png");
+}
+.facebook {
+    background-position: -128px 0;
+}
+.twitter {
+    background-position: -96px 0;    
+}
+.odnoklassniki {
+    background-position: -32px 0;    
+}
+.vk {
+    background-position: 0 0;
+}
+.mailru {
+    background-position: -64px 0;
+}

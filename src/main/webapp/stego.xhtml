@@ -10,23 +10,34 @@
                 <div class="hero-unit" style="text-align: center; background-color: white; background-image: url(img/bgh.png);">
                     <h:form>
                         <p:commandLink styleClass="head" value="SteGO!" style="font-size: 64px; font-weight: bolder;"/>
+                        <h:panelGroup  styleClass="lang">
+                            <p:commandButton styleClass="share vk" value="" actionListener="#{stego.copyToOutput()}"
+                                             onclick="Share.vkontakte('http://stego', 'SteGO!', 'http://localhost:8080/stego/output/', '')"/>
+                            <p:commandButton styleClass="share facebook" value="" actionListener="#{stego.copyToOutput()}"
+                                             onclick="Share.facebook('http://stego', 'SteGO!', 'hhttp://localhost:8080/stego/output/', '')"/>
+                            <p:commandButton styleClass="share odnoklassniki" value="" actionListener="#{stego.copyToOutput()}"
+                                             onclick="Share.odnoklassniki('http://stego', 'SteGO!', 'http://localhost:8080/stego/output/', '')"/>
+                            <p:commandButton styleClass="share twitter" value="" actionListener="#{stego.copyToOutput()}"
+                                             onclick="Share.twitter('http://stego', 'SteGO!', 'http://localhost:8080/stego/output/', '')"/>
+                            <p:commandButton styleClass="share mailru" value="" actionListener="#{stego.copyToOutput()}"
+                                             onclick="Share.mailru('http://stego', 'SteGO!', 'http://localhost:8080/stego/output/', '')"/>
+                        </h:panelGroup>
                     </h:form>
                 </div>
                 <div class="container" style="text-align: center;">
                     <h:panelGrid columns="3" style="margin-bottom: 0px; width: 100%; text-align: center!important;">
                         <h:form>
-                            <p:commandButton value="Назад" 
+                            <p:commandButton value="#{language.lang.get(6)}" 
                                              actionListener="#{stego.redirectToIndex}"
                                              styleClass="btn-small"
                                              style="margin-right: 10px;"
                                              icon="ui-icon-arrowreturnthick-1-w"/>
-                            <p:commandButton value="Сохранить"
+                            <p:commandButton value="#{language.lang.get(7)}"
                                              styleClass="btn-success btn-small" 
                                              ajax="false"
                                              icon="ui-icon-arrowthickstop-1-s">
                                 <p:fileDownload value="#{stego.fileStego}"/>  
                             </p:commandButton>
-
                         </h:form>
                     </h:panelGrid>
                     <p:graphicImage styleClass="img-polaroid"

@@ -1,6 +1,7 @@
 package ru.strozh.stego.view;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import org.apache.commons.io.FileUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -37,6 +39,7 @@ public class StegoController implements Serializable {
     private StreamedContent fileStego;
     private String unstegoText = "";
     private String type = "text";
+    private String secretKey;
 
     public StegoController() {
     }
@@ -97,6 +100,14 @@ public class StegoController implements Serializable {
         type = "file";
     }
 
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
     public void dwnldImg() throws IOException {
         uploadController.downloadImage(urlStr);
         imgName = uploadController.getFileName();
@@ -113,6 +124,7 @@ public class StegoController implements Serializable {
         imgName = "default.jpg";
         text = "";
         unstegoText = "";
+        secretKey = "";
     }
 
     public void redirectToIndex() throws IOException {
@@ -124,16 +136,16 @@ public class StegoController implements Serializable {
             if (file != null) {
                 uploadController.upload(file);
             }
-            imgName = redirectController.redirectToStegoWithFile(imgName, uploadController.getFileName());
+            imgName = redirectController.redirectToStegoWithFile(imgName, uploadController.getFileName(), secretKey);
         } else {
             System.out.println("Yep");
-            imgName = redirectController.redirectToStegoWithText(imgName, text);
+            imgName = redirectController.redirectToStegoWithText(imgName, text, secretKey);
         }
     }
 
     public void redirectToUnStego() throws IOException, GeneralSecurityException {
         System.out.println("imgNameDo=" + imgName);
-        redirectController.redirectToUnStego(imgName);
+        redirectController.redirectToUnStego(imgName, secretKey);
         unstegoText = redirectController.getUnstegoText();
     }
 
@@ -147,10 +159,16 @@ public class StegoController implements Serializable {
         if (redirectController.getResultType().compareTo("text") == 0) {
             InputStream stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/input/" + imgName + ".txt");
             fileStego = new DefaultStreamedContent(stream, "application/txt", imgName + ".txt");
-        } else {            
+        } else {
             InputStream stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/input/" + redirectController.getResultName());
             fileStego = new DefaultStreamedContent(stream, "application/jpg", redirectController.getResultName());
         }
         return fileStego;
+    }
+
+    public void copyToOutput() throws IOException {
+        File input = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/input/" + imgName));
+        File output = new File(FacesContext.getCurrentInstance().getExternalContext().getRealPath("/output/" + imgName));
+        FileUtils.copyFile(input, output);
     }
 }
